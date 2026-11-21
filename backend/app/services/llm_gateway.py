@@ -96,13 +96,34 @@ async def execute_llm_request(
             continue
 
         try:
-            # LiteLLM completion call
-            response = await litellm.acompletion(
-                model=model,
-                messages=messages,
-                api_key=api_key,
-                timeout=30.0
-            )
+            # LiteLLM completion call with primary model and automatic model fallback for Gemini if needed
+            model_candidates = [model]
+            if "gemini" in model:
+                for alt in ["gemini/gemini-1.5-flash", "gemini/gemini-flash-latest", "gemini/gemini-2.5-flash", "gemini/gemini-2.0-flash"]:
+                    if alt not in model_candidates:
+                        model_candidates.append(alt)
+
+            response = None
+            used_model = model
+            for m_candidate in model_candidates:
+                try:
+                    response = await litellm.acompletion(
+                        model=m_candidate,
+                        messages=messages,
+                        api_key=api_key,
+                        timeout=30.0
+                    )
+                    used_model = m_candidate
+                    break
+                except Exception as m_err:
+                    err_msg = str(m_err).lower()
+                    if ("not found" in err_msg or "not available" in err_msg or "404" in err_msg) and m_candidate != model_candidates[-1]:
+                        logger.info(f"Model {m_candidate} not available for {key_id}, trying {model_candidates[model_candidates.index(m_candidate)+1]}...")
+                        continue
+                    raise m_err
+
+            if not response:
+                raise RuntimeError("No response returned from provider")
 
             reply = response.choices[0].message.content or ""
             usage = getattr(response, "usage", None)
@@ -116,14 +137,14 @@ async def execute_llm_request(
                 "reply": reply,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
-                "model": model
+                "model": used_model
             }
             set_in_cache(cache_key, cache_payload)
 
             return {
                 "reply": reply,
                 "resolution_source": "LIVE_INFERENCE",
-                "model": model,
+                "model": used_model,
                 "latency_ms": elapsed_ms,
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
