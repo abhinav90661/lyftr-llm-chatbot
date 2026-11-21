@@ -28,35 +28,19 @@ export default function ChatInput({
 
   return (
     <div className="border-t border-slate-800 bg-slate-900/95 backdrop-blur p-4 sticky bottom-0">
-      <div className="max-w-4xl mx-auto space-y-3">
-        {/* Optional System Prompt Field toggle */}
-        <div className="flex items-center justify-between text-xs text-slate-400">
-          <button
-            type="button"
-            onClick={() => setShowSystemPrompt(!showSystemPrompt)}
-            className="flex items-center gap-1.5 hover:text-slate-200 transition font-medium"
-          >
-            <Sliders className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{showSystemPrompt ? 'Hide System Prompt' : 'Custom System Prompt (Optional)'}</span>
-          </button>
-          {showSystemPrompt && (
-            <span className="text-slate-500">Overrides session default</span>
-          )}
+      <div className="max-w-4xl mx-auto space-y-2.5">
+        {/* System Prompt Input with exact data-testid (always present in DOM for test runners) */}
+        <div className="flex items-center gap-2">
+          <Sliders className="w-3.5 h-3.5 text-emerald-400 shrink-0 hidden sm:block" />
+          <input
+            type="text"
+            data-testid="system-prompt-input"
+            value={systemPrompt}
+            onChange={(e) => setSystemPrompt(e.target.value)}
+            placeholder="System Prompt (Optional - default: 'You are a helpful, concise AI assistant')"
+            className="w-full bg-slate-950/80 border border-slate-800 focus:border-emerald-500/80 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none transition font-mono"
+          />
         </div>
-
-        {/* System Prompt Input with exact data-testid */}
-        {showSystemPrompt && (
-          <div className="transition-all animate-fadeIn">
-            <input
-              type="text"
-              data-testid="system-prompt-input"
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              placeholder="e.g. You are an expert Python engineer. Answer succinctly."
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition font-mono"
-            />
-          </div>
-        )}
 
         {/* Main Chat Input Form */}
         <form onSubmit={handleSubmit} className="relative flex items-center">

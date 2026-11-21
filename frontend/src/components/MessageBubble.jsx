@@ -35,11 +35,10 @@ export default function MessageBubble({ message }) {
       data-testid="assistant-message"
       className="flex gap-3 mb-6 max-w-3xl"
     >
-      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${
-        isCache
-          ? 'bg-teal-950/80 border-teal-500/40 text-teal-400'
-          : 'bg-slate-900 border-emerald-500/40 text-emerald-400'
-      }`}>
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border ${isCache
+        ? 'bg-teal-950/80 border-teal-500/40 text-teal-400'
+        : 'bg-slate-900 border-emerald-500/40 text-emerald-400'
+        }`}>
         {isCache ? <Database className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
       </div>
 
@@ -55,11 +54,10 @@ export default function MessageBubble({ message }) {
             {/* Resolution Source Chip */}
             <span
               data-testid="meta-source"
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-mono font-semibold border ${
-                isCache
-                  ? 'bg-teal-950/80 border-teal-500/50 text-teal-300'
-                  : 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300'
-              }`}
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-mono font-semibold border ${isCache
+                ? 'bg-teal-950/80 border-teal-500/50 text-teal-300'
+                : 'bg-emerald-950/80 border-emerald-500/50 text-emerald-300'
+                }`}
             >
               {isCache ? <Database className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
               {meta.resolution_source}

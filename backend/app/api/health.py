@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.config import settings
 from app.database import ping_db
 from app.models import HealthResponse
@@ -12,15 +12,16 @@ async def health_check():
     and the key pool is loaded.
     """
     db_reachable = await ping_db()
-    if not db_reachable:
-        return HealthResponse(
-            status="database_unreachable",
-            keys_configured=len(settings.get_key_pool()),
-            cache_enabled=True
+    key_pool = settings.get_key_pool()
+
+    if not db_reachable or len(key_pool) == 0:
+        raise HTTPException(
+            status_code=503,
+            detail="database unreachable or key pool not loaded"
         )
 
     return HealthResponse(
         status="ok",
-        keys_configured=len(settings.get_key_pool()),
+        keys_configured=len(key_pool),
         cache_enabled=True
     )

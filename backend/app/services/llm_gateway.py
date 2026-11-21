@@ -62,25 +62,26 @@ async def execute_llm_request(
     cache_key = compute_cache_key(model, messages)
     start_time = time.perf_counter()
 
-    # 1. Check LiteLLM cache first
-    cached_data = get_from_cache(cache_key)
-    if cached_data:
-        elapsed_ms = max(1, int((time.perf_counter() - start_time) * 1000))
-        return {
-            "reply": cached_data["reply"],
-            "resolution_source": "LLM_CACHE",
-            "model": model,
-            "latency_ms": elapsed_ms,
-            "input_tokens": cached_data["input_tokens"],
-            "output_tokens": cached_data["output_tokens"],
-            "key_id": None,
-            "fallback_attempts": 0
-        }
-
-    # 2. Parse failure simulation header if enabled
+    # 1. Parse failure simulation header if enabled
     simulated_failures = {}
     if settings.ENABLE_FAILURE_SIMULATION and simulate_failure_header:
         simulated_failures = parse_simulate_failure_header(simulate_failure_header)
+
+    # 2. Check LiteLLM cache first (bypass cache if failure simulation is active to guarantee failover execution)
+    if not simulated_failures:
+        cached_data = get_from_cache(cache_key)
+        if cached_data:
+            elapsed_ms = max(1, int((time.perf_counter() - start_time) * 1000))
+            return {
+                "reply": cached_data["reply"],
+                "resolution_source": "LLM_CACHE",
+                "model": model,
+                "latency_ms": elapsed_ms,
+                "input_tokens": cached_data["input_tokens"],
+                "output_tokens": cached_data["output_tokens"],
+                "key_id": None,
+                "fallback_attempts": 0
+            }
 
     key_pool = settings.get_key_pool()
     fallback_attempts = 0
