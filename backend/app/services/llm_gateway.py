@@ -100,7 +100,7 @@ async def execute_llm_request(
             # LiteLLM completion call with primary model and automatic model fallback for Gemini if needed
             model_candidates = [model]
             if "gemini" in model:
-                for alt in ["gemini/gemini-3.8-flash", "gemini/gemini-2.5-flash", "gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash", "gemini/gemini-flash-latest"]:
+                for alt in ["gemini/gemini-3.5-flash-lite", "gemini/gemini-3.8-flash", "gemini/gemini-2.5-flash", "gemini/gemini-2.0-flash", "gemini/gemini-1.5-flash"]:
                     if alt not in model_candidates:
                         model_candidates.append(alt)
 

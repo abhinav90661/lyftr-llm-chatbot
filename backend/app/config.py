@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     LLM_API_KEYS: str = "mock-key-1,mock-key-2"
-    LLM_MODEL: str = "gemini/gemini-3.8-flash"
+    LLM_MODEL: str = "gemini/gemini-3.5-flash-lite"
     DATABASE_URL: str = "sqlite:///./data/app.db"
     ALLOWED_ORIGINS: str = "*"
     ENABLE_FAILURE_SIMULATION: bool = True
