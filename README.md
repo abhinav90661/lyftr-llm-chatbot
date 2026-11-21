@@ -6,9 +6,9 @@ Production-grade full-stack LLM chatbot application featuring automatic multi-ke
 
 ## 1. Live URLs
 
-- **Frontend Application**: `https://<your-frontend-deployment-url>.vercel.app` *(Replace with deployed URL)*
-- **Backend API**: `https://<your-backend-deployment-url>.onrender.com` *(Replace with deployed URL)*
-- **Health Check Endpoint**: `https://<your-backend-deployment-url>.onrender.com/health`
+- **Frontend Application**: `https://lyftr-llm-chatbot-dun.vercel.app`
+- **Backend API**: `https://lyftr-llm-backend.onrender.com`
+- **Health Check Endpoint**: `https://lyftr-llm-backend.onrender.com/health`
 
 ---
 
