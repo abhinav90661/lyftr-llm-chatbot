@@ -69,12 +69,9 @@ export default function MessageBubble({ message }) {
 
             {/* Latency Chip */}
             {meta.latency_ms !== undefined && (
-              <span
-                data-testid="meta-latency"
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700/80 text-slate-300 font-mono"
-              >
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700/80 text-slate-300 font-mono">
                 <Clock className="w-3 h-3 text-slate-400" />
-                {meta.latency_ms} ms
+                <span data-testid="meta-latency">{meta.latency_ms} ms</span>
               </span>
             )}
 

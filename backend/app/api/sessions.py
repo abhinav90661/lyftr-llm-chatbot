@@ -4,7 +4,11 @@ from app.models import SessionHistoryResponse, SessionMessage, SessionAssistantM
 
 router = APIRouter()
 
-@router.get("/sessions/{session_id}/messages", response_model=SessionHistoryResponse)
+@router.get(
+    "/sessions/{session_id}/messages",
+    response_model=SessionHistoryResponse,
+    response_model_exclude_none=True
+)
 async def get_session_messages(session_id: str):
     """
     Returns the stored history of one session from SQLite, oldest first,
