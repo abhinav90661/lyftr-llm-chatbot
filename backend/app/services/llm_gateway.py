@@ -85,6 +85,7 @@ async def execute_llm_request(
 
     key_pool = settings.get_key_pool()
     fallback_attempts = 0
+    last_exception = None
 
     # 3. Iterate through key pool
     for key_id, api_key in key_pool:
@@ -153,12 +154,15 @@ async def execute_llm_request(
             }
 
         except Exception as exc:
+            last_exception = exc
             logger.warning(f"Provider call failed for {key_id}: {exc}")
             fallback_attempts += 1
             continue
 
     # 4. If all keys failed, return 503
+    debug_msg = str(last_exception) if last_exception else "no provider responded"
     raise HTTPException(
         status_code=503,
-        detail="all providers unavailable"
+        detail="all providers unavailable",
+        headers={"X-Debug-Error": debug_msg[:300].replace("\n", " ")}
     )
