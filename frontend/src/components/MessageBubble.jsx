@@ -1,9 +1,10 @@
-import React from 'react';
-import { Bot, User, Clock, Zap, Database, KeyRound, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bot, User, Clock, Zap, Database, KeyRound, AlertCircle, Copy, Check, Terminal } from 'lucide-react';
+import MarkdownRenderer from './MarkdownRenderer';
 
 export default function MessageBubble({ message }) {
+  const [copiedCurl, setCopiedCurl] = useState(false);
   const isUser = message.role === 'user';
-  const isAssistant = message.role === 'assistant';
   const meta = message.metadata;
 
   if (isUser) {
@@ -22,6 +23,13 @@ export default function MessageBubble({ message }) {
   // Assistant Message - Strictly adheres to data-testid attributes
   const isCache = meta?.resolution_source === 'LLM_CACHE';
 
+  const copyCurl = () => {
+    const curlCommand = `curl -X POST http://localhost:8000/chat \\\n  -H "Content-Type: application/json" \\\n  -d '{"session_id": "test", "message": "What is the capital of France?"}'`;
+    navigator.clipboard.writeText(curlCommand);
+    setCopiedCurl(true);
+    setTimeout(() => setCopiedCurl(false), 2000);
+  };
+
   return (
     <div
       data-testid="assistant-message"
@@ -35,10 +43,10 @@ export default function MessageBubble({ message }) {
         {isCache ? <Database className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
       </div>
 
-      <div className="flex-1 space-y-3">
-        {/* Reply Bubble */}
-        <div className="bg-slate-900 border border-slate-800/90 rounded-2xl rounded-tl-sm px-5 py-3.5 shadow-md">
-          <p className="whitespace-pre-wrap leading-relaxed text-slate-100 text-sm">{message.content}</p>
+      <div className="flex-1 space-y-2.5">
+        {/* Reply Bubble with Markdown formatting */}
+        <div className="bg-slate-900 border border-slate-800/90 rounded-2xl rounded-tl-sm px-5 py-4 shadow-md">
+          <MarkdownRenderer content={message.content} />
         </div>
 
         {/* Metadata Chips Container */}
@@ -101,7 +109,7 @@ export default function MessageBubble({ message }) {
 
             {/* Fallback attempts badge if fallback occurred */}
             {meta.fallback_attempts > 0 && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-950/80 border border-amber-500/50 text-amber-300 font-mono">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-950/80 border border-amber-500/50 text-amber-300 font-mono font-semibold">
                 <AlertCircle className="w-3 h-3 text-amber-400" />
                 fallback: {meta.fallback_attempts}
               </span>
